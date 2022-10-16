@@ -7,7 +7,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-new_entry: str = "California Coastal"
+new_entry: str = "California Martital Alviso"
+
 
 # simulated opportunity list of database
 opp: List[str] = [
@@ -29,8 +30,7 @@ print(tfidf_matrix.shape)
 
 similarity_matrix = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
-# taking the first one for example  
+# similarity of the last entry with all the other entries including the new entry itself (ignore because it will be around 1)  
 similarity_scores = list(enumerate(similarity_matrix[len(opp)-1]))
-sorted_similarity_scores = sorted(similarity_scores, key=lambda x: x[1], reverse=True)
 
-print(sorted_similarity_scores)
+print(similarity_scores)
