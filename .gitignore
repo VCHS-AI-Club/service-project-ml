@@ -1,3 +1,6 @@
 # venv stuff
 Lib/
 Scripts/
+
+
+pyvenv.cfg

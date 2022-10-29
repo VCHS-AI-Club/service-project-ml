@@ -11,7 +11,7 @@ opp = np.array([])
 for i in range(100):
   opp = np.append(opp, "some text{}".format(i))
 
-ratings_dataset = {i:j for i, j in zip(opp, users)}
+ratings_dataset = {i:j for (i, j) in zip(opp, users)}
 
 # Select the basic features.
 # ratings = ratings.map(lambda x: {
