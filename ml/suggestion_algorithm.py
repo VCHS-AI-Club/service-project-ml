@@ -4,6 +4,7 @@ import tensorflow as tf
 import numpy as np
 import tensorflow_recommenders as tfrs
 
+# sample data, randomly generated
 ratings = np.random.randint(10, size=(100))
 users = np.random.randint(100, size=(100))
 
