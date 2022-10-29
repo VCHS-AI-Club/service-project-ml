@@ -13,14 +13,6 @@ for i in range(100):
 
 ratings_dataset = {i:j for (i, j) in zip(opp, users)}
 
-# Select the basic features.
-# ratings = ratings.map(lambda x: {
-    # "movie_title": x["movie_title"],
-    # "user_id": x["user_id"]
-# })
-
-# movies = movies.map(lambda x: x["movie_title"])
-
 user_id_vocab = tf.keras.layers.StringLookup(mask_token=None)
 user_id_vocab.adapt(ratings_dataset.keys())
 
@@ -28,8 +20,6 @@ opp_titles_vocab = tf.keras.layers.StringLookup(mask_token=None)
 opp_titles_vocab.adapt(opp)
 
 class OpportunityModel(tfrs.Model):
-  # We derive from a custom base class to help reduce boilerplate. Under the hood,
-  # these are still plain Keras Models.
 
   def __init__(
       self,
@@ -38,15 +28,12 @@ class OpportunityModel(tfrs.Model):
       task: tfrs.tasks.Retrieval):
     super().__init__()
 
-    # Set up user and movie representations.
     self.user_model = user_model
     self.opp_model = opp_model
 
-    # Set up a retrieval task.
     self.task = task
 
   def compute_loss(self, features: Dict[Text, tf.Tensor], training=False) -> tf.Tensor:
-    # Define how the loss is computed.
 
     user_embeddings = self.user_model(features["user_id"])
     opp_embeddings = self.movie_model(features["opp"])
@@ -73,15 +60,13 @@ task = tfrs.tasks.Retrieval(metrics=tfrs.metrics.FactorizedTopK(
 model = OpportunityModel(user_model, opp_model, task)
 model.compile(optimizer=tf.keras.optimizers.Adagrad(0.5))
 
-# Train for 3 epochs.
-model.fit(ratings.batch(4096), epochs=3)
+model.fit(ratings.batch(10), epochs=5)
 
-# Use brute-force search to set up retrieval using the trained representations.
 index = tfrs.layers.factorized_top_k.BruteForce(model.user_model)
 index.index_from_dataset(
     opp.batch(100).map(lambda title: (title, model.opp_model(title))))
-    
 
-# Get some recommendations.
-_, titles = index(np.array(["42"]))
-print(f"Top 3 recommendations for user 42: {titles[0, :3]}")
+query :str = "42"    
+
+_, opp_list = index(np.array([query]))
+print(f"Top 5 recommendations for user {query}: {opp_list[0, :5]}")
